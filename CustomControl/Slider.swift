@@ -22,6 +22,7 @@ class Slider: UIControl {
 //    var value
     let lowerLayer = SliderThumbLayer()
     let upperLayer = SliderThumbLayer()
+
     var previousLocation = CGPoint()
     var thumbWidth: CGFloat {
         return bounds.height
@@ -33,16 +34,18 @@ class Slider: UIControl {
         lowerLayer.slider = self
         upperLayer.slider = self
         trackLayer.slider = self
+        
+        // Setting User Intration To the Layers By Default It is True
+        lowerLayer.editEnable = false
+        
         //trackLayer.backgroundColor = UIColor.red.cgColor
         trackLayer.contentsScale = UIScreen.main.scale
         layer.addSublayer(trackLayer)
        // lowerLayer.backgroundColor = UIColor.black.cgColor
         lowerLayer.contentsScale = UIScreen.main.scale
-        //lowerLayer.cornerRadius = 15.0
         layer.addSublayer(lowerLayer)
         upperLayer.contentsScale = UIScreen.main.scale
        // upperLayer.backgroundColor = UIColor.black.cgColor
-      //  upperLayer.cornerRadius = 15.0
         layer.addSublayer(upperLayer)
     }
     override var frame: CGRect{
@@ -136,8 +139,12 @@ class SliderLayer : CALayer {
 class SliderThumbLayer : CALayer {
     var highLighted = false
     weak var slider: Slider?
+     var editEnable = true
     
     override func draw(in ctx: CGContext) {
+        self.slider?.isUserInteractionEnabled = editEnable
+        self.slider?.upperLayer.isHidden = !editEnable
+        self.slider?.lowerLayer.isHidden = !editEnable
         if let sliderObject = slider {
             let thumbFrame = bounds.insetBy(dx: 2.0, dy: 2.0)
             let _cornerRadius = thumbFrame.height * sliderObject.unknown / 2.0
@@ -146,11 +153,6 @@ class SliderThumbLayer : CALayer {
             ctx.setFillColor((slider?.trackTintColor.cgColor)!)
             ctx.addPath(path.cgPath)
             ctx.fillPath()
-            
-//            ctx.setFillColor((slider?.trackHighLightTintColor.cgColor)!)
-//            let lowerValuePosition =  CGFloat((slider?.positionValue(value: (slider?.lowerValue)!))!)
-//            let higherValuePosition = CGFloat((slider?.positionValue(value: (slider?.upperValue)!))!)
-//            ctx.fill(CGRect(x: lowerValuePosition, y: 0.0, width: higherValuePosition - lowerValuePosition, height: bounds.height))
         }
     }
 }
